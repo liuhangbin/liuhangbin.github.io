@@ -22,6 +22,9 @@ copyright = ""            # default: author.name ↓        # 默认为下面配
 [author]                  # essential                     # 必需
   name = "Hangbin Liu"
 
+[frontmatter]
+date = [":filename", ":default"]
+
 [sitemap]                 # essential                     # 必需
   changefreq = "weekly"
   priority = 0.5
