@@ -123,10 +123,10 @@ date = [":filename", ":default"]
     warn = 180              # Display warning if the last modified time is more than these days ago.    # 如果文章最后更新于这天数之前，显示警告
 
   [params.gitment]          # Gitment is a comment system based on GitHub issues. see https://github.com/imsun/gitment
-    owner = ""              # Your GitHub ID
-    repo = ""               # The repo to store comments
-    clientId = ""           # Your client ID
-    clientSecret = ""       # Your client secret
+    owner = "liuhangbin"                                            # Your GitHub ID
+    repo = "liuhangbin.github.io"                                   # The repo to store comments
+    clientId = "512bccfca3a0115f9f2c"                               # Your client ID
+    clientSecret = "a5be51bc72c30f7e0de7bc3a2e8c46c4bc9a5b55"       # Your client secret
 
   [params.gitalk]           # Gitalk is a comment system based on GitHub issues. see https://github.com/gitalk/gitalk
     owner = ""              # Your GitHub ID
