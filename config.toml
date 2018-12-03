@@ -155,7 +155,7 @@ date = [":filename", ":default"]
 
   [params.social]                                         # 社交链接
     a-email = "mailto:liuhangbin@gmail.com"
-    g-github = "http://localhost:1313"
+    g-github = "https://github.com/liuhangbin"
 
 # See https://gohugo.io/about/hugo-and-gdpr/
 [privacy]
