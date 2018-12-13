@@ -30,6 +30,33 @@ baseurl=http://download.lab.bos.redhat.com/rel-eng/OpenStack/Grizzly/latest/sour
 gpgcheck=0
 enabled=0
 
+##### Part of answer file
+
+# Type of network to allocate for tenant networks (eg. vlan, local,
+# gre, vxlan)
+CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE=vlan
+
+# A comma separated list of VLAN ranges for the Neutron openvswitch
+# plugin (eg. physnet1:1:4094,physnet2,physnet3:3000:3999)
+CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1, physnet2:1:4094
+
+# A comma separated list of bridge mappings for the Neutron
+# openvswitch plugin (eg. physnet1:br-eth1,physnet2:br-eth2,physnet3
+# :br-eth3)
+CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-ex
+
+# A comma separated list of colon-separated OVS bridge:interface
+# pairs. The interface will be added to the associated bridge.
+CONFIG_NEUTRON_OVS_BRIDGE_IFACES=
+
+##### neutron OVS plugin config
+[OVS]
+vxlan_udp_port=4789
+network_vlan_ranges=physnet1,physnet2:1:4094
+tenant_network_type=vlan
+enable_tunneling=False
+integration_bridge=br-int
+bridge_mappings=physnet1:br-ex
 
 ##### packstack
 
@@ -92,14 +119,18 @@ source ~/keystonerc_admin
 glance image-create --name RHEL6.4 --is-public true --disk-format qcow2 --container-format bare --file /tmp/images/$image_file
 image_id=`glance image-list | awk '/RHEL6.4/ {print $2}'`
 
+# before create net/subnet/router, you can delete the default on from Web UI
 # create net and subnet
-quantum net-create Network_Vlan_10 --provider:network_type vlan --provider:physical_network physnet1 --provider:segmentation_id 10 --shared
+#quantum net-create Network_Vlan_10 --provider:network_type vlan --provider:physical_network physnet1 --provider:segmentation_id 10 --shared
+neutron net-create Vlan_10 --provider:network_type vlan --provider:physical_network physnet2 --provider:segmentation_id 10 --shared
 quantum subnet-create --gateway 192.168.10.254 --allocation-pool start=192.168.10.2,end=192.168.10.253 Network_Vlan_10 192.168.10.0/24
 vlan_net_id=`nova net-list | awk '/Network_Vlan_10/ {print $2}'`
 vlan_subnet_id=`quantum subnet-list | awk '/192.168.10.0/ {print $2}'`
 
-quantum net-create Beaker_Network --provider:network_type flat --provider:physical_network external --router:external True  --shared
-quantum subnet-create Beaker_Network 10.66.86.0/23 --allocation-pool start=10.66.87.180,end=10.66.87.230 --gateway 10.66.87.254 --enable_dhcp False
+#quantum net-create Beaker_Network --provider:network_type flat --provider:physical_network external --router:external True  --shared
+neutron net-create Public --provider:network_type flat --provider:physical_network physnet1 --router:external True --shared
+quantum subnet-create Beaker_Network 10.66.86.0/23 --allocation-pool start=10.66.87.180,end=10.66.87.230 \
+	--gateway 10.66.87.254 --dns_nameservers list=true 10.66.78.117 8.8.8.8
 beaker_net_id=`nova net-list | awk '/Beaker_Network/ {print $2}'`
 
 # create and config router

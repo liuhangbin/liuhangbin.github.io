@@ -8,10 +8,12 @@ tags: [Router, Switch]
 Reference:
 http://www.juniper.net/techpubs/en_US/junos11.4/topics/topic-map/mcast-mld.html
 
-login: lab
-passwd: lab123
+login: root
+passwd: root123
 
-lab> configure
+root@% cli
+root> configure
+root#
 Entering configuration mode
 
 [edit]
@@ -108,4 +110,54 @@ commit complete
 
 [edit]
 
+### How to monitor interface
 
+## How to set multi interface
+
+root@switch# wildcard range set interfaces xe-0/0/[1,3,5] apply-groups vlan-ports
+
+### How to config lacp
+{master:0}[edit]
+root@switch# set chassis aggregated-devices ethernet device-count 2
+{master:0}[edit interfaces]
+root@switch# set ae0 aggregated-ether-options lacp passive
+{master:0}[edit interfaces]
+root@switch# set xe-0/0/20 ether-options 802.3ad ae0
+{master:0}[edit interfaces]
+root@switch# set xe-0/0/21 ether-options 802.3ad ae0
+{master:0}[edit]
+root@switch# show | diff
+[edit]
++  chassis {
++      aggregated-devices {
++          ethernet {
++              device-count 2;
++          }
++      }
++  }
+[edit interfaces xe-0/0/20]
++    ether-options {
++        802.3ad ae0;
++    }
+[edit interfaces xe-0/0/21]
++    ether-options {
++        802.3ad ae0;
++    }
+[edit interfaces]
++   ae0 {
++       aggregated-ether-options {
++           lacp {
++               passive;
++           }
++       }
++   }
+{master:0}[edit]
+root@switch# delete interfaces xe-0/0/20 unit 0
+{master:0}[edit]
+root@switch# delete interfaces xe-0/0/21 unit 0
+{master:0}[edit]
+root@switch# set interfaces ae0 unit 0 family ethernet-switching vlan member default
+{master:0}[edit]
+root@switch# commit
+
+Ref: http://www.juniper.net/documentation/en_US/junos14.1/topics/task/configuration/link-aggregation-cli.html

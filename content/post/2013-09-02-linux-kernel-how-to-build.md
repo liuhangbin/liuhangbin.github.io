@@ -12,9 +12,19 @@ tags: [linux, kernel]
 2. rpmbuild -bp SPECS/kernel.spec
 3. If you want to add a patch, cp your.patch SOURCES/linux-kernel-test.patch
 4. uncomment # %define buildid .local and change local to you summary
-5. rpmbuild -bb --target=`uname -m` --without debug --without doc --without
+4. yum install -y bison bc xmlto asciidoc hmaccalc python-devel newt-devel pesign \
+   perl-ExtUtils-Embed elfutils-libelf-devel elfutils-devel binutils-devel \
+   audit-libs-devel numactl-devel pciutils-devel ncurses-devel openssl openssl-devel
+5. rpmbuild -bb --target=`uname -m` --without debug --without doc --without \
 headers --without perf --without debuginfo --without tools SPECS/kernel.spec
 
+
+=== How to build a RHEL kernel
+1. make rh-configs
+2. cp redhat/configs/kernel-3.10.0-x86_64.config .config
+3. make oldconfig
+4. make -j28
+5. make rh-check-kabi Or redhat/kabi/check-kabi -k redhat/kabi/Module.kabi_x86_64 -s Module.symvers
 
 === How to build a kernel
 

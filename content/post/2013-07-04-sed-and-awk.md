@@ -5,6 +5,20 @@ Date: 2013-07-04
 tags: [Linux, Sed, Awk]
 ---
 
+=== Sed 多行匹配 ===
+
+$ cat tmp
+abc
+def
+
+$ sed '{N;s/abc\ndef/123\n456/}' tmp
+
+$ cat tmp
+123
+456
+
+Ref: http://kodango.com/sed-and-awk-notes-part-4
+
 === Sed Usage
 sed -e 's/[^ ]* //'  file  //删除文本文件第一列
 sed '1,3d' file //删除1-3行
@@ -35,6 +49,10 @@ sed '2,3 i\xxx' b.txt  //在b.txt的第2行和第3行之前插入“xxx”
 sed '2,$ i\xxx' b.txt  //在b.txt的第2行至最后一行之前插入“xxx”
 sed 's/^abc/123&/' a.txt  //在a.txt的abc行前插入123
 sed 's/abc.*$/&123' a.txt //在a.txt的abc行后插入123
+sed 's/\(^abc\)\n/\1/' a.txt  //将a.txt的abc行的回车删除
+sed -i 's@\(myecho \)\(".*"\)\( run\)@run \2@' runtest.sh //将 myecho "$cmd" run 替换成 run "$cmd"
+sed -n -e '/<text /,/<\/text>/p a.xml 从html或xml中按照tag对应关系，筛选打印出
+指定的tag内容，使用了正则中的p命令，默认就没有“不能处理多行内容”以及“贪婪性”的问题
 
 文件test内容如下：
 aaa = test1, test2
@@ -48,6 +66,7 @@ bbb = acd, bacd, abcdefg
 ccc = 123, 12345
  
 sed -i 's/bbb=.*/&,abcdefgh/' test.txt
+
 
 1.删除文件每行的第一个字符
 sed 's/^.//' /etc/passwd

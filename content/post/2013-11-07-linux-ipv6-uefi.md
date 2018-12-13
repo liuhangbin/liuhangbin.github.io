@@ -204,6 +204,18 @@ Reference :
 https://docs.fedoraproject.org/en-US/Fedora/18/html/Installation_Guide/s1-netboot-pxe-config-efi.html
 https://access.redhat.com/site/documentation//en-US/Red_Hat_Enterprise_Linux/6/html/Installation_Guide/ap-install-server.html
 
+=== Steps on test host after install
+1. disable security boot and enable EFI
+1. check ip address are configed after reboot
+1. iptables -F; ip6tables -F
+1. add yum repo
+1. # cat rhel6.repo
+[rhel6]
+name=Red Hat Enterprise Linux $releasever - $basearch - Source
+baseurl=http://2000::ffff/rhel6
+enabled=1
+gpgcheck=0
+
 
 === An example for all steps
 install
