@@ -10,12 +10,18 @@ which works in layer 1.5 and in subnet. But MPLS works in global internet.
 
 ## Enable MPLS Routing
 
-Check if MPLS Routing is enabled
+Some distribution may build mpls route as a module, so before start, please
+check if you have `/proc/sys/net/mpls/`, if not, then load the module first:
 ```
-# sysctl -w net.mpls.conf.foo.input=1
-sysctl: cannot stat /proc/sys/net/mpls/conf/foo/input: No such file or
-directory
+# modprobe mpls_router
+# modprobe mpls_iptunnel
+# lsmod | grep mpls
+mpls_iptunnel          16384  0
+mpls_router            36864  1 mpls_iptunnel
+ip_tunnel              28672  1 mpls_router
+
 ```
+
 If failed, then we need to enable CONFIG_MPLS, CONFIG_MPLS_ROUTING,
 CONFIG_MPLS_IPTUNNEL when compile the kernel. If you got error after build
 like

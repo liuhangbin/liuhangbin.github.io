@@ -29,3 +29,54 @@ executed later in the kernel stack, so they have access to more metadata and
 core kernel functionality. Apart from tc and XDP programs, there are various
 other kernel subsystems as well which use BPF such as tracing (kprobes,
 uprobes, tracepoints, etc).
+
+### XDP programing
+
+Install kernel-devel to include the kernel headers
+
+Reference: [xdp intro](https://developers.redhat.com/blog/2018/12/06/achieving-high-performance-low-latency-networking-with-xdp-part-1/)
+[xdp_code](https://github.com/pabeni/xdp_walkthrough_examples)
+Use [xdp_dummy.c](https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/tree/tools/testing/selftests/bpf/progs/xdp_dummy.c)
+as example. The first include line, provided by the kernel-heade package of
+most distributions. The second header, which still is part of the Linux kernel but is not usually packaged by most distributions, , contains a list of the available eBPF helpers and
+the definition of the SEC() macro. The current solution is, unfortunately, to download the full Linux sources, unpack them somewhere on your local disc.
+
+And we need a Makefile like
+
+```
+#KDIR ?= /lib/modules/$(shell uname -r)/source
+KDIR ?= /home/net
+CLANG ?= clang
+LLC ?= llc
+ARCH := $(subst x86_64,x86,$(shell arch))
+
+BIN := xdp_dummy.o
+CLANG_FLAGS = -I. -I$(KDIR)/arch/$(ARCH)/include \
+	-I$(KDIR)/arch/$(ARCH)/include/generated \
+	-I$(KDIR)/include \
+	-I$(KDIR)/arch/$(ARCH)/include/uapi \
+	-I$(KDIR)/arch/$(ARCH)/include/generated/uapi \
+	-I$(KDIR)/include/uapi \
+	-I$(KDIR)/include/generated/uapi \
+	-D__KERNEL__ -D__BPF_TRACING__ -Wno-unused-value -Wno-pointer-sign \
+	-D__TARGET_ARCH_$(ARCH) -Wno-compare-distinct-pointer-types \
+	-I$(KDIR)/tools/testing/selftests/bpf/ \
+	-Wno-gnu-variable-sized-type-not-at-end \
+	-Wno-address-of-packed-member -Wno-tautological-compare \
+	-Wno-unknown-warning-option \
+	-O2 -target bpf -emit-llvm
+#	-include $(KDIR)/include/linux/kconfig.h \
+
+all: $(BIN)
+xdp_dummy.o: xdp_dummy.c
+	$(CLANG) $(CLANG_FLAGS) -c $< -o - | $(LLC) -march=bpf -mcpu=$(CPU) -filetype=obj -o $@
+
+clean:
+	rm -f *.o
+
+```
+
+Where the KDIR is the kernel source code path.
+
+*Note*: If you got error like "Makefile:27:  missing separator.  Stop". Then check if the new separate line of Makefile has spaces instead of a tab after copy/paste.
+
