@@ -155,6 +155,21 @@ ip netns exec hb ip -6 route del 2100::/64 dev foo
 ip netns exec hb ip -6 route add 2100::/64 encap mpls 100 dev foo
 ```
 
+## MPLS RFCs
+
+1. [RFC3032](https://tools.ietf.org/html/rfc3032) MPLS Label Stack Encoding
+
+1. [RFC4023](https://tools.ietf.org/html/rfc4203) Encapsulating MPLS in IP or Generic Routing Encapsulation (GRE)
+| Ether Hdr | IP Hdr | MPLS Hdr | Message |
+| Ether Hdr | IP Hdr | GRE Hdr | MPLS Hdr | Inner IP | Message |
+
+1. [RFC7510](https://tools.ietf.org/html/rfc7510) Encapsulating MPLS in UDP
+
+| Ether Hdr | IP Hdr | UDP Hdr | MPLS Hdr | Message |
+
+Linux kernel has [supported](https://www.spinics.net/lists/netdev/msg385392.html) this feature, but it need FOU enabled first.
+
+
 References:
 
 1. [MPLS testbed with kernel 4.3](http://www.samrussell.nz/2015/12/mpls-testbed-on-ubuntu-linux-with.html)
