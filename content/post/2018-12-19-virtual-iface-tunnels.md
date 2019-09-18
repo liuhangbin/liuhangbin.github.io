@@ -1,7 +1,6 @@
 ---
 title: Tunnel interfaces introduction
 date: 2018-12-19
-draft: true
 ---
 
 # Introduction
@@ -163,8 +162,8 @@ GRE6TAP, just list GRETAP, has an Ethernet header in the inner header
 
 ### How to create a GRE tunnel
 ```
-# ip link add name gre1 type gre6 local <LOCAL_IPv6_ADDR> remote <REMOTE_IPv6_ADDR>
-# ip link add name gretap1 type gretap6 local <LOCAL_IPv6_ADDR> remote <REMOTE_IPv6_ADDR>
+# ip link add name gre1 type ip6gre local <LOCAL_IPv6_ADDR> remote <REMOTE_IPv6_ADDR>
+# ip link add name gretap1 type ip6gretap local <LOCAL_IPv6_ADDR> remote <REMOTE_IPv6_ADDR>
 ```
 
 ## FOU
@@ -272,8 +271,8 @@ Here is a summary of all the tunnels we introduced.
 | vit6             | IPv6         | IPsec              | IPv6              |
 | gre              | IPv4         | GRE                | IPv4/IPv6         |
 | gretap           | IPv4         | GRE                | Ether + IPv4/IPv6 |
-| gre6             | IPv6         | GRE                | IPv4/IPv6         |
-| gre6tap          | IPv6         | GRE                | Ether + IPv4/IPv6 |
+| ip6gre           | IPv6         | GRE                | IPv4/IPv6         |
+| ip6gretap        | IPv6         | GRE                | Ether + IPv4/IPv6 |
 | fou              | IPv4/IPv6    | UDP                | IPv4/IPv6/GRE     |
 | gue              | IPv4/IPv6    | UDP + GUE          | IPv4/IPv6/GRE     |
 | geneve           | IPv4/IPv6    | UDP + Geneve       | Ether + IPv4/IPv6 |
