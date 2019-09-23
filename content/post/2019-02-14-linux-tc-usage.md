@@ -69,6 +69,8 @@ There are two kinds of qdiscs, classless and classfull.
       # $U32 match ip dport 80 0xffff flowid 1:10
       # $U32 match ip sport 25 0xffff flowid 1:20
 ```
+    - Others
+      - ATM, DRR, DSMARK, HFSC, QFQ
   - Ingress qdisc: All qdiscs discussed so far are egress qdiscs. The ingress
     qdisc itself does not require any parameters. It differs from other qdiscs
     in that it does not occupy the root of a device.
@@ -84,9 +86,21 @@ There are two kinds of qdiscs, classless and classfull.
         # tc filter add dev eth0 protocol ip parent ffff: flower skip_sw ip_proto sctp dst_port 80 action drop
         # tc filter show dev eth0 ingress
 ```
-    - Others
-      - ATM, DRR, DSMARK, HFSC, QFQ
-  - Example
+    - clsact: added by commit [1f211a1b9 ("net, sched: add clsact qdisc")](https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=1f211a1b929) works both ingress and egress. we can use this as a replace of ingress, only one of them (ingress/clsact) can exist per netdevice
+```
+      # tc qdisc add dev foo clsact
+      # tc qdisc show dev foo
+      qdisc clsact ffff: parent ffff:fff1
+      # tc filter add dev foo ingress bpf da obj bar.o sec ingress
+      # tc filter add dev foo egress  bpf da obj bar.o sec egress
+      # tc filter show dev foo ingress
+      filter protocol all pref 49152 bpf
+      filter protocol all pref 49152 bpf handle 0x1 bar.o:[ingress] direct-action
+      # tc filter show dev foo egress
+      filter protocol all pref 49152 bpf
+      filter protocol all pref 49152 bpf handle 0x1 bar.o:[egress] direct-action
+```
+  - Examples
     - Classless
 ```
       # tc qdisc show dev eth1
