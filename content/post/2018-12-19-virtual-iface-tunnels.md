@@ -124,6 +124,49 @@ VTI6 is the IPv6 equivalent of VTI.
 You can also config IPsec via [libreswan](https://libreswan.org/wiki/Route-based_VPN_using_VTI)
 or [strongswan](https://wiki.strongswan.org/projects/strongswan/wiki/RouteBasedVPN).
 
+## XFRM
+
+XFRM interface is added in 4.19 kernel via
+[f203b76d78092faf2 ("xfrm: Add virtual xfrm interfaces")](https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=f203b76d78092faf2).
+The purpose of these interfaces is to overcome the design limitations that the existing VTI devices have.
+
+The main limitations that we see with the current VTI are the following:
+  - VTI interfaces are L3 tunnels with configurable endpoints. we can have only one VTI tunnel with
+    wildcard src/dst tunnel endpoints in the system.
+  - VTI needs separate interfaces for IPv4 and IPv6 tunnels.
+  - VTI works just with tunnel mode SAs.
+  - VTI is configured with a combination GRE keys and xfrm marks.
+
+To overcome these limits, now we have xfrm interface, which could
+  - It's possible to tunnel IPv4 and IPv6 through the same interface
+  - No limitation on xfrm mode (tunnel, transport and beet).
+  - It's a generic virtual interface that ensures IPsec transformation
+
+For more details, please see this [article](https://lwn.net/Articles/757391/)
+
+### How to create a XFRM tunnel
+```
+mode=tunnel
+daddr=192.168.1.156
+laddr=192.168.1.227
+xdaddr=192.168.10.156
+xladdr=192.168.10.227
+ispi=0x20
+ospi=0x10
+
+# ip xfrm state flush
+# ip xfrm policy flush
+# ip link set eth1 up
+# ip addr add $laddr/24 dev eth1
+# ip link add xfrm0 type xfrm dev eth1 if_id 3
+# ip link set xfrm0 up
+# ip addr add $xladdr/24 dev xfrm0
+# ip xfrm state add src $laddr dst $daddr spi $ospi proto ah auth sha1 beef_fish_pork_salad mode $mode if_id 3
+# ip xfrm state add src $daddr dst $laddr spi $ispi proto ah auth sha1 beef_fish_pork_salad mode $mode if_id 3
+# ip xfrm policy add dir in  tmpl src $daddr dst $laddr proto ah spi $ispi mode $mode if_id 3
+# ip xfrm policy add dir out tmpl src $laddr dst $daddr proto ah spi $ospi mode $mode if_id 3
+```
+
 ## GRE/GRETAP
 
 Generic Routing Encapsulation, also known as GRE, is defined in [RFC 2784](https://tools.ietf.org/html/rfc2784)

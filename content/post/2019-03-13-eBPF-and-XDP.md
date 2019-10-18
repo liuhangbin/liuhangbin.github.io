@@ -30,6 +30,11 @@ On a high-level there are three major differences when comparing XDP BPF program
   - `tc/BPF does not require HW driver changes, XDP typically uses native driver mode for best performance`
   - `Offloaded tc/ebpf and Offloaded XDP offer similar performance advantages`
 
+On programing part:
+
+ - XDP takes `struct xdp_md *ctx` as parameter, which points to the raw data.
+   tc/ebpf takes `struct __sk_buff *skb`, as parameter, which could use more
+   info supplied by __sk_buff.
 ---
 ### XDP programing
 
