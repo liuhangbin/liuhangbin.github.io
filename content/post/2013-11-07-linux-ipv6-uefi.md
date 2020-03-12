@@ -5,14 +5,16 @@ Date: 2013-11-07
 tags: [Linux, UEFI, IPv6, PXE]
 ---
 
+There are two methods for PXE boot, one is via BIOS, another one
+is vis EFI. Please be aware of the differents first.
 
-=== Configuring PXE Boot for BIOS
+## Configuring PXE Boot for BIOS
 
 1. `yum install tftp-server dhcpd`
-2. edit /etc/xinet.d/tftp and change *disabled* from *yes* to *no*
+2. edit /etc/xinet.d/tftp and change `disabled` from `yes` to `no`
 3. change `flags` to `IPv6` if you want to set pxe for IPv6
 4. `cp pxelinux.0 /var/lib/tftpboot/pxelinux/`
-5. edit /etc/dhcp/dhcpd.conf for IPv4
+5. edit /etc/dhcp/dhcpd.conf if you want setup pxe for IPv4
 ```
 option space pxelinux;
 option pxelinux.magic code 208 = string;
@@ -32,7 +34,7 @@ subnet 192.168.0.0 netmask 255.255.255.0 {
         }
 }
 ```
-6. edit /etc/dhcp/dhcpd6.conf for IPv6
+6. edit /etc/dhcp/dhcpd6.conf if you want setup pxe for IPv6
 ```
 # cat /etc/dhcp/dhcpd6.conf
 default-lease-time 2592000;
@@ -52,8 +54,8 @@ subnet6 2012::/64 {
 }
 
 ```
-5. `mkdir /var/lib/tftpboot/pxelinux/pxelinux.cfg`
-6. edit /var/lib/tftpboot/pxelinux/pxelinux.cfg/default
+7. `mkdir /var/lib/tftpboot/pxelinux/pxelinux.cfg`
+8. edit /var/lib/tftpboot/pxelinux/pxelinux.cfg/default
 ```
 UI vesamenu.c32
 LABEL rhel6_desktop
@@ -61,11 +63,14 @@ LABEL rhel6_desktop
         KERNEL rhel6/vmlinuz
         APPEND initrd=rhel6/initrd.img
 ```
-8. `cp /boot/grub/splash.xpm.gz /var/lib/tftpboot/pxelinux/splash.xpm.gz`
-9. `cp /path/to/x86_64/os/images/pxeboot/{vmlinuz,initrd.img} /var/lib/tftpboot/pxelinux/rhel6/`
+9. `cp /boot/grub/splash.xpm.gz /var/lib/tftpboot/pxelinux/splash.xpm.gz`
+10. `cp /path/to/x86_64/os/images/pxeboot/{vmlinuz,initrd.img} /var/lib/tftpboot/pxelinux/rhel6/`.
+
+    *Note* the dir here is rhel6, it may changed with different release.
 
 After these steps, the directory would like:
 
+```
 /var/lib/tftpboot/pxelinux/
  |
  | -- pxelinux.0
@@ -79,15 +84,18 @@ After these steps, the directory would like:
         | -- initrd.img
         | -- vmlinuz
 
+```
 
-=== Configuring PXE Boot for EFI
+------
+## Configuring PXE Boot for EFI
 
-==== Config bios
+### Config bios
+
 1. Enable EFI and disable CSM
 
-=== Config Server
+### Config Server
 1. `yum install tftp-server`
-2. edit /etc/xinet.d/tftp and change *disabled* from *yes* to *no*
+2. edit /etc/xinet.d/tftp and change `disabled` from `yes` to `no`
 3. change `flags` to `IPv6` if you want to set pxe for IPv6
 4. Create a directory path within tftpboot for the EFI boot images, and then copy them from your boot directory
 5. tftpboot topo
@@ -163,8 +171,8 @@ subnet6 2012::/64 {
 }
 
 ```
-7. mount RHEL ISO in /var/www/html and start httpd
-8. start radvd for IPv6 autoconfig, because when init install program, it will
+7. mount RHEL ISO in `/var/www/html` and start `httpd`
+8. start `radvd` for IPv6 autoconfig, because when init install program, it will
 start NetworkManager and auto config IPv6, If you choose DHCP type IPv6, then
 no need for radvd.
 ```
@@ -192,32 +200,39 @@ service httpd restart
 service radvd restart
 ```
 
-=== Start each servers
-1. `chkconfig xinetd on`
-2. `chkconfig ftfp on`
-3. `ip addr add 192.168.0.1/24 dev eth0`
-4. `ip addr add 2012::1/64 dev eth0`
-5. `service dhcpd start`
-5. `service dhcpd6 start`
+------
+## Start each services
 
-Reference :
-https://docs.fedoraproject.org/en-US/Fedora/18/html/Installation_Guide/s1-netboot-pxe-config-efi.html
-https://access.redhat.com/site/documentation//en-US/Red_Hat_Enterprise_Linux/6/html/Installation_Guide/ap-install-server.html
+```
+chkconfig xinetd on
+chkconfig ftfp on
+ip addr add 192.168.0.1/24 dev eth0
+ip addr add 2012::1/64 dev eth0
+service dhcpd start
+service dhcpd6 start
+```
 
-=== Steps on test host after install
+------
+### Test steps after install
+
 1. disable security boot and enable EFI
 1. check ip address are configed after reboot
 1. iptables -F; ip6tables -F
-1. add yum repo
-1. # cat rhel6.repo
+1. add yum repo and install some packages
+```
+# cat rhel6.repo
 [rhel6]
 name=Red Hat Enterprise Linux $releasever - $basearch - Source
 baseurl=http://2000::ffff/rhel6
 enabled=1
 gpgcheck=0
+```
 
+------
+## An anaconda-ks.cfg for all the configurations
 
-=== An example for all steps
+`NOTE`: As this is a very old blog, I have forgot if this works. Please just take it as a reference.
+```
 install
 url --url=http://download.englab.brq.redhat.com/pub/rhel/released/RHEL-6/6.4/Workstation/x86_64/os/
 lang en_US.UTF-8
@@ -339,7 +354,7 @@ chmod +x /usr/local/sbin/pxe-stop
 %post --log=/dev/console
 # INIT 5
 sed -i -re 's/^id:[0-9]:initdefault:$/id:5:initdefault:/'  /etc/inittab
-# AUTOLOGIN                                                                     
+# AUTOLOGIN
 sed -ri '/^\[daemon\]$/ a AutomaticLogin = root' /etc/gdm/custom.conf
 sed -ri '/^\[daemon\]$/ a AutomaticLoginEnable = true' /etc/gdm/custom.conf
 
@@ -484,3 +499,8 @@ ONBOOT=no
 EOF
 
 %end
+```
+------
+## Reference
+1. [Fedora netboot pxe config](https://docs.fedoraproject.org/en-US/Fedora/18/html/Installation_Guide/s1-netboot-pxe-config-efi.html)
+1. [RHEL6 AP install server](https://access.redhat.com/site/documentation//en-US/Red_Hat_Enterprise_Linux/6/html/Installation_Guide/ap-install-server.html)
