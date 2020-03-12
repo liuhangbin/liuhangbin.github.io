@@ -23,14 +23,7 @@ ip_tunnel              28672  1 mpls_router
 ```
 
 If failed, then we need to enable CONFIG_MPLS, CONFIG_MPLS_ROUTING,
-CONFIG_MPLS_IPTUNNEL when compile the kernel. If you got error after build
-like
-```
-# ip -f mpls route add 101 dev lo
-RTNETLINK answers: Operation not supported
-```
-then you need to run `sysctl -w net.mpls.platform_labels=65535`. See
-[mpls-sysctl](https://www.kernel.org/doc/Documentation/networking/mpls-sysctl.txt)
+CONFIG_MPLS_IPTUNNEL when compile the kernel. 
 
 ## MPLS Routing
 
@@ -154,6 +147,20 @@ ip netns exec ha ip -6 route add 2100::/64 encap mpls 100 dev foo
 ip netns exec hb ip -6 route del 2100::/64 dev foo
 ip netns exec hb ip -6 route add 2100::/64 encap mpls 100 dev foo
 ```
+
+## Trouble shooting
+
+1. If you got error after build like
+```
+# ip -f mpls route add 101 dev lo
+RTNETLINK answers: Operation not supported
+```
+then you need to run `sysctl -w net.mpls.platform_labels=65535`. See
+[mpls-sysctl](https://www.kernel.org/doc/Documentation/networking/mpls-sysctl.txt)
+
+2. If you can receive mpls message and decapsulat it on lo. But could not reply
+the message. You may need to set `rp_filter` to relaxed mode, like
+`sysctl -w net.ipv4.conf.all.rp_filter=2`.
 
 ## MPLS RFCs
 
