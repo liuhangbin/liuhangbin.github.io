@@ -4,7 +4,7 @@ date: 2019-03-13
 ---
 
 ### What is eBPF
-Reference: [bpf](https://docs.cilium.io/en/v1.4/bpf/)
+Reference: [bpf](https://cilium.readthedocs.io/en/latest/bpf/)
 
 The extended Berkeley Packet Filter (eBPF) has first appeared in Kernel 3.18.
 The original version is being referred to "classic" BPF (cBPF) . cBPF is
@@ -480,3 +480,5 @@ available eBPF helpers and the definition of the SEC() macro.
 The current solution is, unfortunately, to download the full Linux sources, unpack them somewhere on your local disc.
 
 [a simple xdp introduction](https://mcorbin.fr/pages/xdp-introduction/)
+
+[Dive into BPF: a list of reading material](https://qmonnet.github.io/whirl-offload/2016/09/01/dive-into-bpf/)

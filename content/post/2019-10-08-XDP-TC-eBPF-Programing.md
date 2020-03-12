@@ -183,3 +183,7 @@ all: $(BIN)
 clean:
 	rm -f *.o
 ```
+
+=== Reference
+[An other Makefile example](https://github.com/dpino/xdp_ipv6_filter/blob/master/Makefile)
+[xdp-tutorial](https://github.com/xdp-project/xdp-tutorial)
