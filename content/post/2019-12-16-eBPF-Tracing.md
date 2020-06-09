@@ -37,17 +37,20 @@ TODO: learn how to use bcc/trace and bpftrace
 ### How to deal with the errors
 
 Q: bcc: "Unable to find kernel headers. Try rebuilding kernel with CONFIG_IKHEADERS=m (module)"
+
 A: you need to install kernel-devel package if you use RHEL8
 
 Q: bpftrace got errors like "'net/sock.h' file not found".
+
 A: you need to install kernel-devel package if you use RHEL8
 
 Q: bcc: # ./trace 'sys_execve "%s", arg1'
 cannot attach kprobe, probe entry may not exist
 Failed to attach BPF program b'probe_sys_execve_1' to kprobe b'sys_execve'
+
 A: Check '/proc/kallsyms' and see if it contains the probe you want to
 attache, in this case it should be '__x64_sys_execve' on x86_64 system.
 
 ## Reference
-[](http://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html)
-[](http://www.brendangregg.com/ebpf.html)
+[learn-ebpf-tracing](http://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html)
+[ebpf](http://www.brendangregg.com/ebpf.html)
