@@ -12,7 +12,7 @@ tags: [linux, kernel]
 2. rpmbuild -bp SPECS/kernel.spec
 3. If you want to add a patch, cp your.patch SOURCES/linux-kernel-test.patch
 4. uncomment # %define buildid .local and change local to you summary
-4. yum install -y bison bc xmlto asciidoc hmaccalc python-devel newt-devel pesign \
+4. yum install -y flex bison bc xmlto asciidoc hmaccalc python-devel newt-devel pesign \
    perl-ExtUtils-Embed elfutils-libelf-devel elfutils-devel binutils-devel \
    audit-libs-devel numactl-devel pciutils-devel ncurses-devel openssl openssl-devel
 5. rpmbuild -bb --target=`uname -m` --without debug --without doc --without \
