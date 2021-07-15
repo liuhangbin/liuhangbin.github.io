@@ -78,6 +78,7 @@ supports-priv-flags: yes
         loaded_at 2019-09-18T02:32:50-0400  uid 0
         xlated 16B  jited 64B  memlock 4096B
 # llvm-objdump -S -no-show-raw-insn xdp_mini.o
+# llvm-objdump -h xdp_mini.o	// only show section headers
 
 xdp_mini.o:     file format ELF64-BPF
 
@@ -164,7 +165,7 @@ char __license[] __section("license") = "GPL";
 
 The code can be compiled and loaded via iproute2 as follows:
 ```
-# clang -g -O2 -Wall -target bpf -c tc-example.c -o tc-example.o
+# clang -g -O2 -Wall -target bpf -I ~/iproute2/include/ -c tc-example.c -o tc-example.o
 
 // not sure why, but if I build it without -g, then there will be a failure like
 // BTF debug data section '.BTF' rejected: Invalid argument (22)!

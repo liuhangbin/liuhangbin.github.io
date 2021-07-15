@@ -12,9 +12,8 @@ tags: [linux, kernel]
 2. rpmbuild -bp SPECS/kernel.spec
 3. If you want to add a patch, cp your.patch SOURCES/linux-kernel-test.patch
 4. uncomment # %define buildid .local and change local to you summary
-4. yum install -y flex bison bc xmlto asciidoc hmaccalc python-devel newt-devel pesign \
-   perl-ExtUtils-Embed elfutils-libelf-devel elfutils-devel binutils-devel \
-   audit-libs-devel numactl-devel pciutils-devel ncurses-devel openssl openssl-devel
+5. dnf install -y flex bison bc gcc elfutils-libelf-devel elfutils-devel openssl-devel dwarves vim clang llvm git
+6. dnf install -y libpcap-devel python3-docutils
 5. rpmbuild -bb --target=`uname -m` --without debug --without doc --without \
 headers --without perf --without debuginfo --without tools SPECS/kernel.spec
 

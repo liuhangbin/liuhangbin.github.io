@@ -184,6 +184,27 @@ clean:
 	rm -f *.o
 ```
 
+=== bpf printk
+
+```
+SEC("xdp_printk")
+int xdp_printk(struct xdp_md *ctx)
+{
+       char fmt[] = "devmap redirect: dev %u -> dev %u len %u\n";
+       void *data_end = (void *)(long)ctx->data_end;
+       void *data = (void *)(long)ctx->data;
+       unsigned int len = data_end - data;
+
+       bpf_trace_printk(fmt, sizeof(fmt),
+                       ctx->ingress_ifindex, ctx->egress_ifindex, len);
+
+       return XDP_PASS;
+}
+
+After load the section, you can get the print info from
+cat /sys/kernel/debug/tracing/trace_pipe
+```
+
 === Reference
 [An other Makefile example](https://github.com/dpino/xdp_ipv6_filter/blob/master/Makefile)
 [xdp-tutorial](https://github.com/xdp-project/xdp-tutorial)

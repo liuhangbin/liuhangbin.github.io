@@ -121,6 +121,9 @@ perf probe 'tcp_sendmsg:81 seglen'
 # Add a tracepoint fro the team_port_disable() function entry in module team
 perf probe -m team -a team_port_disable
 
+# Add a tracepoint for do_sys_open() with the filename as a string (needs debuginfo):
+perf probe 'do_sys_open filename:string'
+
 # show the lines of a tracepoint in module team
 ```
 
@@ -145,6 +148,13 @@ or a parameter in this function
 # perf probe -m team -a "team_port_enable:15 team->en_port_count port->index"
 # perf probe -m team -a "team_port_disable:15 team->en_port_count port->index"
 # perf record -e "probe:team_port_disable" -e "probe:team_port_enable" -ag
+# perf script
+```
+or another parameter example
+```
+# perf probe 'crypto_unregister_alg alg->cra_name:string alg->cra_driver_name:string alg->cra_refcnt'
+# perf record -e probe:crypto_unregister_alg -aR
+# modprobe wireguard && sleep 1 && modprobe -r wireguard
 # perf script
 ```
 
