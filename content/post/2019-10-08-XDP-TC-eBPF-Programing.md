@@ -205,6 +205,8 @@ After load the section, you can get the print info from
 cat /sys/kernel/debug/tracing/trace_pipe
 ```
 
+More examples, please see [the guide to bpf_trace_printk() and bpf_printk()](https://nakryiko.com/posts/bpf-tips-printk/)
+
 === Reference
 [An other Makefile example](https://github.com/dpino/xdp_ipv6_filter/blob/master/Makefile)
 [xdp-tutorial](https://github.com/xdp-project/xdp-tutorial)

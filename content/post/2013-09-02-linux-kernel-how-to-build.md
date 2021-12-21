@@ -47,3 +47,11 @@ If you want to rename the kernel, add a name in .config CONFIG_LOCALVERSION
 1. install kernel devel package
 2. cd rpmbuild/BUILD/kernel-3.10.0-64.el7/linux-3.10.0-64.el7.x86_64/drivers/infiniband/ulp/ipoib/
 3. make -C /usr/src/kernels/3.10.0-64.el7.x86_64/ M=${PWD} modules
+
+Or build an upstream kernel driver with clang
+
+make -j28 scripts prepare modules_prepare CC=clang
+make -C . M=drivers/net/wireguard/ CC=clang
+
+[1] https://www.kernel.org/doc/html/latest/kbuild/modules.html
+[2] https://www.kernel.org/doc/html/latest/kbuild/llvm.html

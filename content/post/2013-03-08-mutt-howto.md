@@ -51,3 +51,8 @@ python2 python/oauth2.py --generate_oauth2_token --client_id=xxx --client_secret
 ```
 
 REF: https://maskray.me/blog/2016-02-12-gmail-offlineimap-xoauth2
+
+
+3. Mark a tread as read
+
+Alt + r
