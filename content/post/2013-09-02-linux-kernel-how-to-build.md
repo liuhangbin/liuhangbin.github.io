@@ -12,7 +12,7 @@ tags: [linux, kernel]
 2. rpmbuild -bp SPECS/kernel.spec
 3. If you want to add a patch, cp your.patch SOURCES/linux-kernel-test.patch
 4. uncomment # %define buildid .local and change local to you summary
-5. dnf install -y flex bison bc gcc elfutils-libelf-devel elfutils-devel openssl-devel dwarves vim clang llvm git
+5. dnf install -y flex bison bc gcc elfutils-libelf-devel elfutils-devel openssl-devel dwarves vim clang llvm git ldd-devel
 6. dnf install -y libpcap-devel python3-docutils
 5. rpmbuild -bb --target=`uname -m` --without debug --without doc --without \
 headers --without perf --without debuginfo --without tools SPECS/kernel.spec
@@ -50,8 +50,18 @@ If you want to rename the kernel, add a name in .config CONFIG_LOCALVERSION
 
 Or build an upstream kernel driver with clang
 
+```
 make -j28 scripts prepare modules_prepare CC=clang
 make -C . M=drivers/net/wireguard/ CC=clang
+```
+
+Or only build a driver for testing:
+
+```
+mkdir build_dir && cp config build_dir/.config
+make ARCH=x86_64 mrproper
+make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/net/bonding/
+```
 
 [1] https://www.kernel.org/doc/html/latest/kbuild/modules.html
 [2] https://www.kernel.org/doc/html/latest/kbuild/llvm.html
