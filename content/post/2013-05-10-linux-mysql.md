@@ -5,6 +5,21 @@ Date: 2013-05-10
 tags: [Linux, MySql]
 ---
 
+Install
+---
+1.
+```
+$ sudo dnf install community-mysql-server
+$ sudo systemctl enable mysqld
+$ sudo systemctl start mysqld
+$ sudo mysql_secure_installation
+$ sudo mysql -u root -p
+
+mysql> show databases;
+mysql> exit
+
+```
+
 User Usage
 ---
 1) Start Mysql

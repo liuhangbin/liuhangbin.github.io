@@ -9,6 +9,7 @@ tags: [linux, kernel]
 === How to build a kernel with src.rpm
 
 1. install kernel-$version.src.rpm; cd rpmbuild/
+1. dnf install -y rpm-build
 2. rpmbuild -bp SPECS/kernel.spec
 3. If you want to add a patch, cp your.patch SOURCES/linux-kernel-test.patch
 4. uncomment # %define buildid .local and change local to you summary
